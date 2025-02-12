@@ -47,11 +47,18 @@ def main():
   global signIn
   global overheadOption
 
+  if "tmp" not in os.listdir():
+    os.mkdir("tmp")
+
+  if "reports" not in os.listdir():
+    os.mkdir("reports")
+
   print(banner)
 
   signInChoice = h.signInHandler()
   overheadChoice = h.overheadHandler()
   fromDate, toDate = h.dateHandler()
+  # fromDate, toDate = "01-01-2024", "31-12-2024" # Debugging purpose
 
   requirements = singInOptions[signInChoice]()
   session = signIn[signInChoice](requirements, session)
@@ -63,7 +70,8 @@ def main():
   session = w.getDashboard(selectedCertificate,session)
 
   today = time.localtime()
-  filename = f"{today.tm_mday}-{today.tm_mon}-{today.tm_year}_{today.tm_hour}-{today.tm_min}-{today.tm_sec}_report_of_{fromDate}--{toDate}.csv"
+  filename = f"{today.tm_mday}-{today.tm_mon}-{today.tm_year}_{overheadOption[overheadChoice].split('.')[1]}_report_of_{fromDate}--{toDate}.csv"
+  # filename = f"{today.tm_mday}-{today.tm_mon}-{today.tm_year}_inbox_report_of_{fromDate}--{toDate}.csv" # Debugging purpose
 
   headers = "Tarix, Göndərən tərəf, Göndərən VÖEN, Qəbul edən tərəf, Qəbul edən VÖEN, Mesaj, Serial kod, Status, Malın adı, Malın kodu, Barkod, Ölçü vahidi, Miqdarı / Həcmi, Vahidin satış qiyməti, Cəmi məbləği(manatla) 6*7, Aksiz dərəcəsi(%), Aksiz Məbləği(manatla), Cəmi 6*7+10, ƏDV-yə 18% cəlb edilən, ƏDV-yə 0% cəlb edilən, ƏDV-dən azad olunan, ƏDV-yə cəlb edilməyən, ƏDV məbləği (11*0.18), Yol vergisi, Yekun Məbləğ (11+16+17), URL\n"
   h.setCsvHeaders(filename, headers)
@@ -79,8 +87,10 @@ try:
   main()
 except KeyboardInterrupt:
   print(f"\n{c.FG_RED}[!] Exiting Program! {c.END}")
+  input()
 except Exception as e:
   print(f"\n{c.FG_RED}[!] Some error happened! {c.END}")
-  print(e)
+  print(e.with_traceback())
+  input()
 
 # main()

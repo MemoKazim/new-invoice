@@ -192,9 +192,62 @@ def getInvoiceUrls(overheadChoice, fromDate, toDate, session):
   """
   URLS = []
 
+  filter="""
+{
+  "sortBy": "creationDate",
+  "sortAsc": true,
+  "statuses": [
+    "approved",
+    "onApproval",
+    "updateApproval",
+    "updateRequested",
+    "cancelRequested",
+    "approvedBySystem",
+    "onApprovalEdited",
+    "canceled",
+    "deletedBySystem",
+    "deactivated",
+    "cancelationRefused",
+    "correctionRefused"
+  ],
+  "types": [
+    "current",
+    "corrected"
+  ],
+  "kinds": [
+    "defaultInvoice",
+    "agent",
+    "resale",
+    "recycling",
+    "taxCodex163",
+    "taxCodex177_5",
+    "returnInvoice",
+    "returnByAgent",
+    "returnRecycled",
+    "exportNoteInvoice",
+    "exciseGoodsTransfer",
+    "advanceInvoice"
+  ],
+  "serialNumber": null,
+  "senderTin": null,
+  "senderName": null,
+  "productName": null,
+  "productCode": null,
+  "receiverTin": null,
+  "receiverName": null,
+  "creationDateFrom": "FROMDATE 00:00",
+  "creationDateTo": "TODATE 23:59",
+  "amountFrom": null,
+  "amountTo": null,
+  "offset": 0,
+  "maxCount": 200,
+  "actionOwner": null
+}
+  """
+
   # Use filter.json as template
-  with open("./json/filter.json", "r", encoding="UTF-8") as j:
-    filter = j.read()
+  # with open("./json/filter.json", "r", encoding="UTF-8") as j:
+  #   filter = j.read()
 
   # Convert string to dictionary data
   filter = json.loads(filter)

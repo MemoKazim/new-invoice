@@ -1,4 +1,5 @@
 from lib.colors import bcolors as c
+from openpyxl import Workbook
 import lib.validate as v
 import pandas as pd
 import os
@@ -175,8 +176,15 @@ def parseInbox(json, url, filename):
       exempt      = float(item['exempt'])
       vatCost     = float(vat18 * 0.18)
       roadTax     = float(item['roadTax'])
-      finalPrice  = float(cost + vat18 + roadTax)
+      finalPrice  = float(cost + vatCost + roadTax)
     
+      # Fix unclosed values
+      comment = json["invoiceComment"].replace(",","，").replace("\n", ".")
+      if comment.count('"') % 2 != 0:
+        comment += '"'
+      if comment.count("'") % 2 != 0:
+        comment += "'"
+
       # Define row for nice format writing in csv file
       row = {
         "createdAt"   : ' '.join(map(str,json['createdAt'].split("T"))),
@@ -184,7 +192,7 @@ def parseInbox(json, url, filename):
         "senderTIN"   : json['sender']['tin'],
         "receiverName": json['receiver']['name'],
         "receiverTIN" : json['receiver']['tin'],
-        "comment"     : json["invoiceComment"].replace(",","，").replace("\n", "."),
+        "comment"     : comment,
         "serialNumber": json['serialNumber'],
         "status"      : json['status'],
         "productName" : productName,
@@ -204,9 +212,9 @@ def parseInbox(json, url, filename):
         "vatCost"     : vatCost,
         "roadTax"     : roadTax,
         "finalPrice"  : finalPrice,
-        "reference"   : f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1]}",
+        "reference"   : f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}",
       }
-
+      print(row["reference"])
       # Write data into file
       r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
 
@@ -252,6 +260,8 @@ def convertToXlsx(csvDirectory, filename):
   
   # Inform User about generation
   print(f"{c.FG_GREEN}[+] Generated excel file under ./reports/ path{c.END}")
+
+
 
 def cleanTmp():
   """

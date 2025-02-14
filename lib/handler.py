@@ -261,8 +261,6 @@ def convertToXlsx(csvDirectory, filename):
   # Inform User about generation
   print(f"{c.FG_GREEN}[+] Generated excel file under ./reports/ path{c.END}")
 
-
-
 def cleanTmp():
   """
   This function cleans ./tmp/ folder to avoid report collusion.

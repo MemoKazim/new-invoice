@@ -1,3 +1,5 @@
 tmp/*
 reports/*
 venv
+setup.py
+test.py

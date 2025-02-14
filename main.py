@@ -77,6 +77,7 @@ def main():
   h.setCsvHeaders(filename, headers)
   URLS = w.getInvoiceUrls(overheadOption[overheadChoice], fromDate, toDate, session)
   w.getOverheads(URLS, session, filename)
+  w.logout(session)
   h.convertToXlsx("./tmp/", filename)
   h.cleanTmp()
   h.fileOpenerHandler(filename)
@@ -87,10 +88,11 @@ try:
   main()
 except KeyboardInterrupt:
   print(f"\n{c.FG_RED}[!] Exiting Program! {c.END}")
+  sys.exit()
   input()
 except Exception as e:
   print(f"\n{c.FG_RED}[!] Some error happened! {c.END}")
-  print(e.with_traceback())
+  # print(e.with_traceback())
   input()
 
 # main()

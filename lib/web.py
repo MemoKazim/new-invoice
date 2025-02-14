@@ -295,3 +295,13 @@ def getOverheads(URLS, session, filename):
 
     # Parse it as inbox data and generate CSV
     h.parseInbox(r.json(), invoice, filename)
+
+def logout(session):
+  r = session.post(host + "/api/po/auth/public/v1/legacyLogout")
+  if r.ok:
+    print(f"{c.FG_GREEN}[+] Successfully logged out.{c.END}")
+  
+  session.cookies.clear()
+  session.headers = {}
+  print(f"{c.FG_GREEN}[+] Session terminated!{c.END}")
+  session.close()

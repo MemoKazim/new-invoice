@@ -53,6 +53,8 @@ def main():
   if "reports" not in os.listdir():
     os.mkdir("reports")
 
+  h.checkLib() # Important when convert to exe
+
   print(banner)
 
   signInChoice = h.signInHandler()

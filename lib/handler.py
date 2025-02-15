@@ -2,7 +2,25 @@ from lib.colors import bcolors as c
 from openpyxl import Workbook
 import lib.validate as v
 import pandas as pd
+import importlib
 import os
+
+def checkLib():
+  """
+  This function checks whether required library is in end system
+  """
+  try:
+      importlib.import_module('pandas')
+  except:
+      os.system("pip install pandas")
+  try:
+      importlib.import_module('requests')
+  except:
+      os.system("pip install requests")
+  try:
+      importlib.import_module('openpyxl')
+  except:
+      os.system("pip install openpyxl")
 
 def getAsanLogin():
   """

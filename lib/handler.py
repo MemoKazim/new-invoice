@@ -10,17 +10,17 @@ def checkLib():
   This function checks whether required library is in end system
   """
   try:
-      importlib.import_module('pandas')
+    importlib.import_module('pandas')
   except:
-      os.system("pip install pandas")
+    os.system("pip install pandas")
   try:
-      importlib.import_module('requests')
+    importlib.import_module('requests')
   except:
-      os.system("pip install requests")
+    os.system("pip install requests")
   try:
-      importlib.import_module('openpyxl')
+    importlib.import_module('openpyxl')
   except:
-      os.system("pip install openpyxl")
+    os.system("pip install openpyxl")
 
 def getAsanLogin():
   """
@@ -173,68 +173,88 @@ def parseInbox(json, url, filename):
   `filename`: Filename for write data into
   """
 
+  FAILED_URLS = set()
+
   # Open file to write into it
   with open(f"tmp/{filename}", "a", encoding="UTF-8") as r:
 
     # Iterate through all items in single invoice and parse data for future use
     for item in json['items']:
-      productName = item['productName'].replace(",","，").replace("\n", ".")
-      productCode = item['productGroup']['code'].replace(",","，").replace("\n", ".")
-      barcode     = item['barcode']
-      unit        = item['unit'].replace(",","，").replace("\n", ".")
-      quantity    = float(item['quantity'])
-      pricePerUnit= float(item['pricePerUnit'])
-      costAmount  = float(pricePerUnit * quantity)
-      exciseRate  = float(item['exciseRate'])
-      excise      = float(item['excise'])
-      cost        = float(costAmount + excise)
-      vat18       = float(item['vat18'])
-      vat0        = float(item['vat0'])
-      vatFree     = float(item['vatFree'])
-      exempt      = float(item['exempt'])
-      vatCost     = float(vat18 * 0.18)
-      roadTax     = float(item['roadTax'])
-      finalPrice  = float(cost + vatCost + roadTax)
-    
-      # Fix unclosed values
-      comment = json["invoiceComment"].replace(",","，").replace("\n", ".")
-      if comment.count('"') % 2 != 0:
-        comment += '"'
-      if comment.count("'") % 2 != 0:
-        comment += "'"
+      try:
+        productCode = None
+        productName = item['productName'].replace(",","，").replace("\n", ".")
+        barcode     = item['barcode']
+        unit        = item['unit'].replace(",","，").replace("\n", ".")
+        quantity    = float(item['quantity']) if item['quantity'] is not None else 0.0
+        pricePerUnit= float(item['pricePerUnit']) if item['pricePerUnit'] is not None else 0.0
+        costAmount  = float(pricePerUnit * quantity)
+        exciseRate  = float(item['exciseRate']) if item['exciseRate'] is not None else 0.0
+        excise      = float(item['excise']) if item['excise'] is not None else 0.0
+        cost        = float(costAmount + excise) 
+        vat18       = float(item['vat18']) if item['vat18'] is not None else 0.0
+        vat0        = float(item['vat0']) if item['vat0'] is not None else 0.0
+        vatFree     = float(item['vatFree']) if item['vatFree'] is not None else 0.0
+        exempt      = float(item['exempt']) if item['exempt'] is not None else 0.0
+        vatCost     = float(vat18 * 0.18)
+        roadTax     = float(item['roadTax']) if item['roadTax'] is not None else 0.0
+        finalPrice  = float(cost + vatCost + roadTax)
+      
+        # Fix unclosed values and problematic invoices
+        if item['productGroup']:
+          productCode = item['productGroup']['code'].replace(",","，").replace("\n", ".")
+        comment = json["invoiceComment"].replace(",","，").replace("\n", ".")
+        if comment.count('"') % 2 != 0:
+          comment += '"'
+        if comment.count("'") % 2 != 0:
+          comment += "'"
 
-      # Define row for nice format writing in csv file
-      row = {
-        "createdAt"   : ' '.join(map(str,json['createdAt'].split("T"))),
-        "senderName"  : json['sender']['name'],
-        "senderTIN"   : json['sender']['tin'],
-        "receiverName": json['receiver']['name'],
-        "receiverTIN" : json['receiver']['tin'],
-        "comment"     : comment,
-        "serialNumber": json['serialNumber'],
-        "status"      : json['status'],
-        "productName" : productName,
-        "productCode" : productCode,
-        "barcode"     : barcode,
-        "unit"        : unit,
-        "quantity"    : quantity,
-        "pricePerUnit": pricePerUnit,
-        "costAmount"  : costAmount,
-        "exciseRate"  : exciseRate,
-        "excise"      : excise,
-        "cost"        : cost,
-        "vat18"       : vat18,
-        "vat0"        : vat0,
-        "vatFree"     : vatFree,
-        "exempt"      : exempt,
-        "vatCost"     : vatCost,
-        "roadTax"     : roadTax,
-        "finalPrice"  : finalPrice,
-        "reference"   : f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}",
-      }
-      print(row["reference"])
+        # Define row for nice format writing in csv file
+        row = {
+          "createdAt"   : ' '.join(map(str,json['createdAt'].split("T"))),
+          "senderName"  : json['sender']['name'],
+          "senderTIN"   : json['sender']['tin'],
+          "receiverName": json['receiver']['name'],
+          "receiverTIN" : json['receiver']['tin'],
+          "comment"     : comment,
+          "serialNumber": json['serialNumber'],
+          "status"      : json['status'],
+          "productName" : productName,
+          "productCode" : productCode,
+          "barcode"     : barcode,
+          "unit"        : unit,
+          "quantity"    : quantity,
+          "pricePerUnit": pricePerUnit,
+          "costAmount"  : costAmount,
+          "exciseRate"  : exciseRate,
+          "excise"      : excise,
+          "cost"        : cost,
+          "vat18"       : vat18,
+          "vat0"        : vat0,
+          "vatFree"     : vatFree,
+          "exempt"      : exempt,
+          "vatCost"     : vatCost,
+          "roadTax"     : roadTax,
+          "finalPrice"  : finalPrice,
+          "reference"   : f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}",
+        }
+      except Exception as e:
+        print(e.with_traceback())
+        with open("tmp/debug.txt", "a", encoding="UTF-8") as d:
+          d.write(f"{item}\n")
+        # print(item)
+        ref = f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}"
+        FAILED_URLS.add(ref)
+        continue
+      # print(row["reference"])
       # Write data into file
       r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
+  
+  if FAILED_URLS:
+    with open("tmp/fail.txt", "a", encoding="UTF-8") as f:
+      for failed_url in FAILED_URLS:
+        f.write(f"{failed_url}\n")
+        print(f"{c.FG_RED}Source [-] {failed_url} {c.END}")
+
 
 def setCsvHeaders(filename, headers):
   """
@@ -262,22 +282,26 @@ def convertToXlsx(csvDirectory, filename):
   filename = filename.split(".")[0] + ".xlsx"
 
   # Generate Excel file 
-  with pd.ExcelWriter(f"reports/{filename}", engine='openpyxl') as writer:
-    
-    # Get all csv files from given directory path
-    for filename in os.listdir(csvDirectory):
+  while True:
+    try:
+      with pd.ExcelWriter(f"reports/{filename}", engine='openpyxl') as writer:
+        
+        # Get all csv files from given directory path
+        for filename in os.listdir(csvDirectory):
 
-      # Check if file extention is csv
-      if filename.endswith('.csv'):
-        filePath = os.path.join(csvDirectory, filename)
-        df = pd.read_csv(filePath)
+          # Check if file extention is csv
+          if filename.endswith('.csv'):
+            filePath = os.path.join(csvDirectory, filename)
+            df = pd.read_csv(filePath)
 
-        # Set excel sheet name
-        sheetName = "Report"
-        df.to_excel(writer, sheet_name=sheetName, index=False, header=True)
-  
-  # Inform User about generation
-  print(f"{c.FG_GREEN}[+] Generated excel file under ./reports/ path{c.END}")
+            # Set excel sheet name
+            sheetName = "Report"
+            df.to_excel(writer, sheet_name=sheetName, index=False, header=True)
+      print(f"{c.FG_GREEN}[+] Generated excel file under ./reports/ path{c.END}")
+      break
+    except PermissionError:
+      print(f"{c.FG_YELLOW}[*] Excel file is open. Please close the file and press enter!{c.END}")
+    # Inform User about generation
 
 def cleanTmp():
   """

@@ -1,0 +1,33 @@
+{
+  "itemId": "EBDS09671700022",
+  "productGroup": {
+    "code": "7224101000",
+    "type": "good",
+    "name": {
+      "az": "Külçə və ya digər ilkin formalarda aşqarlanmış digər poladlar; aşqarlanmış poladlardan yarımfabrikatlar:– külçə və digər ilkin formalar:– – instrumental poladdan",
+      "en": "",
+      "ru": ""
+    }
+  },
+  "productName": "Yönəldici-30A5.Q.03.01.001",
+  "unit": "ədəd",
+  "unitFromDict": null,
+  "quantity": 25.0,
+  "pricePerUnit": 0.95,
+  "cost": 23.75,
+  "serviceCost": null,
+  "exciseRate": null,
+  "excise": null,
+  "commission": null,
+  "tradeAddition": null,
+  "vat18": 0.0,
+  "vatFree": 0.0,
+  "vat0": 0.0,
+  "exempt": 0.0,
+  "roadTax": null,
+  "barcode": "0",
+  "category": null,
+  "returnReason": null,
+  "sourceInvoiceInfo": null,
+  "packagingGoodsNumber": null
+}

@@ -1,8 +1,11 @@
 from lib.colors import bcolors as c
 from lib.banner import banner
 import lib.handler as h
+import config as cfg
 import lib.web as w
+import traceback
 import requests
+import datetime
 import time
 import sys
 import os
@@ -23,6 +26,14 @@ session.headers.update({
   "Te":"trailers",
   "Connection":"keep-alive",
 })
+
+NETWORK_ERROR = (
+  ConnectionError, 
+  ConnectionAbortedError, 
+  ConnectionRefusedError, 
+  ConnectionResetError, 
+  requests.exceptions.RequestException
+)
 
 singInOptions = {
   "1": h.getKPSLogin,
@@ -94,9 +105,16 @@ except KeyboardInterrupt:
   print(f"\n{c.FG_RED}[!] Exiting Program! {c.END}")
   sys.exit()
   input()
+except NETWORK_ERROR as e:
+  print(f"\n{c.FG_RED}[!] Bad news! Did you connect to the internet? {c.END}")
+  sys.exit()
 except Exception as e:
-  print(f"\n{c.FG_RED}[!] Some error happened! {c.END}")
-  print(e.with_traceback())
-  input()
+  print(f"\n{c.FG_RED}[!] Unexpected error happened! Please contact to developer! Exiting Program!{c.END}")
+  with open("log/error.log", "a", encoding="UTF-8") as ef:
+    ef.write(f"{datetime.datetime.now()} - {e}\n")
+  if cfg.DEBUG:
+    print(f"{c.FG_RED}[!] Error: {e} {c.END}")
+    print(f"{c.FG_RED}[!] Traceback: {traceback.format_exc()} {c.END}")
+  sys.exit()
 
 # main()

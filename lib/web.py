@@ -45,7 +45,7 @@ def AsanLogin(data, session):
     sys.exit()
 
   # Inform user about action
-  print(f"{c.FG_GREEN}[+] Logging in system via ASAN IMZA\n[*] Waiting for confirmation!{c.END}")
+  print(f"{c.FG_GREEN}[+] Logging in system via ASAN IMZA\n{c.FG_YELLOW}[*] Waiting for confirmation!{c.END}")
   # input(f"{c.FG_YELLOW}[*] Press Enter after conforming ASAN IMZA...{c.END}") # Remove manual checking
 
   tempHeader = {

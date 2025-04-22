@@ -1,8 +1,11 @@
 from lib.colors import bcolors as c
 from openpyxl import Workbook
 import lib.validate as v
+import config as cfg
 import pandas as pd
 import importlib
+import traceback
+import datetime
 import os
 
 def checkLib():
@@ -259,18 +262,19 @@ def parseInbox(json, url, filename):
           "reference"   : f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}",
         }
       except Exception as e:
-        print(e.with_traceback())
-        with open("tmp/debug.txt", "a", encoding="UTF-8") as d:
-          d.write(f"{item}\n")
-        # print(item)
+        if cfg.DEBUG:
+          print(f"{c.FG_RED}[!] Error occurred while parsing data: {e}{c.END}")
+        with open("log/error.log", "a", encoding="UTF-8") as ef:
+          ef.write(f"{datetime.datetime.now()} - {e}\n")
         ref = f"https://new.e-taxes.gov.az/eportal/az/invoice/view/{url.split("/")[-1].replace('sourceSystem', 'source')}"
         FAILED_URLS.add(ref)
         continue
-      # print(row["reference"])
+
       # Write data into file
       r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
   
   if FAILED_URLS:
+    print(f"{c.FG_RED} [!] Failed to parse some URLs. See below: {c.END}")
     with open("tmp/fail.csv", "a", encoding="UTF-8") as f:
       for failed_url in FAILED_URLS:
         f.write(f"{failed_url}\n")
@@ -295,9 +299,6 @@ def convertToXlsx(csvDirectory, filename):
   `csvDirectory`: folder name of contained csv files
   `filename`: Excel export filename
   """
-  import pandas as pd
-  import os
-  import traceback
 
   print(f"{c.FG_GREEN}[+] Generating excel report please wait...")
 
@@ -334,8 +335,9 @@ def convertToXlsx(csvDirectory, filename):
     except PermissionError:
       input(f"{c.FG_YELLOW}[*] Excel file is open. Please close it and press Enter to retry...{c.END}")
     except Exception as e:
-      print(f"{c.FG_RED}[!] An error occurred: {str(e)}{c.END}")
-      traceback.print_exc()
+      print(f"{c.FG_RED}[!] An error occurred! Could not convert to Excel File. Please manually convert from ./tmp/*.csv file{c.END}")
+      if cfg.DEBUG:
+        print(f"{c.FG_RED}[!] Error: {traceback.print_exc()}{c.END}")
       break
 
 def cleanTmp():

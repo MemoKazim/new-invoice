@@ -165,6 +165,25 @@ def certificateHandler(certificates):
       certificateChoice = input(f"{c.FG_YELLOW}[*] Option: {c.END}")
   return int(certificateChoice)
 
+def sanitizeField(field):
+  """
+  This function sanitizes field data and removes unwanted characters from it.
+  `field`: Field data which will be sanitized
+  """
+  # Remove unwanted characters from field
+  if field is None:
+    return 0.0 
+  
+  if type(field) is float:
+    return field
+
+  if type(field) is int:
+    return float(field)
+
+  field = field.replace("\n", ".").replace(",", "，").replace(";", "；").replace(":", "：").replace("'", "‘").replace('"', "“").replace("`", "‘").replace("(", "（").replace(")", "）").replace("{", "｛").replace("}", "｝").replace("[", "【").replace("]", "】")
+  field = field.replace("!", "！").replace("?", "？").replace("<", "＜").replace(">", "＞").replace("&", "＆").replace("$", "＄").replace("%", "％").replace("^", "＾").replace("*", "＊").replace("+", "＋").replace("-", "－").replace("=", "＝").replace("|", "｜")
+  return field
+
 def parseInbox(json, url, filename):
   """
   This function parses json data into csv readable rows, and writes each row into filname given.
@@ -181,43 +200,45 @@ def parseInbox(json, url, filename):
     # Iterate through all items in single invoice and parse data for future use
     for item in json['items']:
       try:
-        productCode = None
-        productName = item['productName'].replace(",","，").replace("\n", ".")
-        barcode     = item['barcode']
-        unit        = item['unit'].replace(",","，").replace("\n", ".")
-        quantity    = float(item['quantity']) if item['quantity'] is not None else 0.0
-        pricePerUnit= float(item['pricePerUnit']) if item['pricePerUnit'] is not None else 0.0
-        costAmount  = float(pricePerUnit * quantity)
-        exciseRate  = float(item['exciseRate']) if item['exciseRate'] is not None else 0.0
-        excise      = float(item['excise']) if item['excise'] is not None else 0.0
-        cost        = float(costAmount + excise) 
-        vat18       = float(item['vat18']) if item['vat18'] is not None else 0.0
-        vat0        = float(item['vat0']) if item['vat0'] is not None else 0.0
-        vatFree     = float(item['vatFree']) if item['vatFree'] is not None else 0.0
-        exempt      = float(item['exempt']) if item['exempt'] is not None else 0.0
-        vatCost     = float(vat18 * 0.18)
-        roadTax     = float(item['roadTax']) if item['roadTax'] is not None else 0.0
-        finalPrice  = float(cost + vatCost + roadTax)
-      
+        productCode  = None
+        productName  = sanitizeField(item['productName'])
+        barcode      = sanitizeField(item['barcode'])
+        unit         = sanitizeField(item['unit'])
+        quantity     = float(item['quantity'])
+        pricePerUnit = float(item['pricePerUnit'])
+        costAmount   = float(pricePerUnit * quantity)
+        exciseRate   = float(item['exciseRate'])
+        excise       = float(item['excise'])
+        cost         = float(costAmount + excise)
+        vat18        = float(item['vat18'])
+        vat0         = float(item['vat0'])
+        vatFree      = float(item['vatFree'])
+        exempt       = float(item['exempt'])
+        vatCost      = float(vat18 * 0.18)
+        roadTax      = float(item['roadTax'])
+        finalPrice   = float(cost + vatCost + roadTax)
+        comment      = sanitizeField(json["invoiceComment"])
+        senderName   = sanitizeField(json['sender']['name'])
+        senderTIN    = sanitizeField(json['sender']['tin'])
+        receiverName = sanitizeField(json['receiver']['name'])
+        receiverTIN  = sanitizeField(json['receiver']['tin'])
+        status       = sanitizeField(json['status'])
+        serialNumber = sanitizeField(json['serialNumber'])
+
         # Fix unclosed values and problematic invoices
         if item['productGroup']:
-          productCode = item['productGroup']['code'].replace(",","，").replace("\n", ".")
-        comment = json["invoiceComment"].replace(",","，").replace("\n", ".")
-        if comment.count('"') % 2 != 0:
-          comment += '"'
-        if comment.count("'") % 2 != 0:
-          comment += "'"
+          productCode = sanitizeField(item['productGroup']['code'])
 
         # Define row for nice format writing in csv file
         row = {
           "createdAt"   : ' '.join(map(str,json['createdAt'].split("T"))),
-          "senderName"  : json['sender']['name'],
-          "senderTIN"   : json['sender']['tin'],
-          "receiverName": json['receiver']['name'],
-          "receiverTIN" : json['receiver']['tin'],
+          "senderName"  : senderName,
+          "senderTIN"   : senderTIN,
+          "receiverName": receiverName,
+          "receiverTIN" : receiverTIN,
           "comment"     : comment,
-          "serialNumber": json['serialNumber'],
-          "status"      : json['status'],
+          "serialNumber": serialNumber,
+          "status"      : status,
           "productName" : productName,
           "productCode" : productCode,
           "barcode"     : barcode,
@@ -250,11 +271,10 @@ def parseInbox(json, url, filename):
       r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
   
   if FAILED_URLS:
-    with open("tmp/fail.txt", "a", encoding="UTF-8") as f:
+    with open("tmp/fail.csv", "a", encoding="UTF-8") as f:
       for failed_url in FAILED_URLS:
         f.write(f"{failed_url}\n")
         print(f"{c.FG_RED}Source [-] {failed_url} {c.END}")
-
 
 def setCsvHeaders(filename, headers):
   """
@@ -275,33 +295,48 @@ def convertToXlsx(csvDirectory, filename):
   `csvDirectory`: folder name of contained csv files
   `filename`: Excel export filename
   """
-  # Inform User about action
+  import pandas as pd
+  import os
+  import traceback
+
   print(f"{c.FG_GREEN}[+] Generating excel report please wait...")
 
-  # Reform filename to xlsx extention
   filename = filename.split(".")[0] + ".xlsx"
 
-  # Generate Excel file 
   while True:
     try:
+      dfs = []
+      sheet_names = []
+
+      # Load dataframes first (outside ExcelWriter)
+      for fname in os.listdir(csvDirectory):
+        if fname.endswith('.csv'):
+          filePath = os.path.join(csvDirectory, fname)
+          try:
+            df = pd.read_csv(filePath, encoding='utf-8-sig', on_bad_lines='warn', delimiter=",")
+            dfs.append(df)
+            sheet_names.append(os.path.splitext(fname)[0][:31])  # Excel sheet name limit
+          except pd.errors.ParserError as e:
+            print(f"{c.FG_RED}[!] Failed to parse {fname}: {e}{c.END}")
+
+      # If no valid DataFrames, raise error before opening ExcelWriter
+      if not dfs:
+        raise ValueError("No valid CSV files were parsed. Excel file will not be created.")
+
+      # Now write to Excel safely
       with pd.ExcelWriter(f"reports/{filename}", engine='openpyxl') as writer:
-        
-        # Get all csv files from given directory path
-        for filename in os.listdir(csvDirectory):
+        for df, sheet_name in zip(dfs, sheet_names):
+          df.to_excel(writer, sheet_name=sheet_name, index=False, header=True)
 
-          # Check if file extention is csv
-          if filename.endswith('.csv'):
-            filePath = os.path.join(csvDirectory, filename)
-            df = pd.read_csv(filePath)
-
-            # Set excel sheet name
-            sheetName = "Report"
-            df.to_excel(writer, sheet_name=sheetName, index=False, header=True)
       print(f"{c.FG_GREEN}[+] Generated excel file under ./reports/ path{c.END}")
       break
+
     except PermissionError:
-      print(f"{c.FG_YELLOW}[*] Excel file is open. Please close the file and press enter!{c.END}")
-    # Inform User about generation
+      input(f"{c.FG_YELLOW}[*] Excel file is open. Please close it and press Enter to retry...{c.END}")
+    except Exception as e:
+      print(f"{c.FG_RED}[!] An error occurred: {str(e)}{c.END}")
+      traceback.print_exc()
+      break
 
 def cleanTmp():
   """

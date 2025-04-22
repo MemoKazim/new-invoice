@@ -45,8 +45,8 @@ def AsanLogin(data, session):
     sys.exit()
 
   # Inform user about action
-  print(f"{c.FG_GREEN}[+] Logging in system via ASAN IMZA{c.END}")
-  input(f"{c.FG_YELLOW}[*] Press Enter after conforming ASAN IMZA...{c.END}")
+  print(f"{c.FG_GREEN}[+] Logging in system via ASAN IMZA\n[*] Waiting for confirmation!{c.END}")
+  # input(f"{c.FG_YELLOW}[*] Press Enter after conforming ASAN IMZA...{c.END}") # Remove manual checking
 
   tempHeader = {
     "Referer": "https://new.e-taxes.gov.az/eportal/az/verification/asan"
@@ -61,8 +61,9 @@ def AsanLogin(data, session):
 
       # If status is not successful send request to check again
       while not r.json()['successful']:
-        input(f"{c.FG_YELLOW}[*] Press Enter after confirming ASAN IMZA...{c.END}")
+        # input(f"{c.FG_YELLOW}[*] Press Enter after confirming ASAN IMZA...{c.END}") # Remove manual checking
         r = session.get(host + "/api/po/auth/public/v1/asanImza/status", headers=tempHeader)
+        time.sleep(3) # Remove manual checking
       break
 
     # Handle possible exceptions
@@ -75,7 +76,6 @@ def AsanLogin(data, session):
 
       if fail_count == 3:
         print(f"{c.FG_RED}[!] Something went wrong. Please try again. \nExiting program...{c.END}")
-        print(e)
         sys.exit()
         break
 

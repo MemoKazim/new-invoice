@@ -64,6 +64,9 @@ def main():
   if "reports" not in os.listdir():
     os.mkdir("reports")
 
+  if "log" not in os.listdir():
+    os.mkdir("log")
+
   h.checkLib() # Important when convert to exe
 
   h.cleanTmp()

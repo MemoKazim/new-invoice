@@ -311,7 +311,7 @@ def convertToXlsx(csvDirectory, filename):
 
       # Load dataframes first (outside ExcelWriter)
       for fname in os.listdir(csvDirectory):
-        if fname.endswith('.csv'):
+        if fname.endswith('.tmp'):
           filePath = os.path.join(csvDirectory, fname)
           try:
             df = pd.read_csv(filePath, encoding='utf-8-sig', on_bad_lines='warn', delimiter=",")

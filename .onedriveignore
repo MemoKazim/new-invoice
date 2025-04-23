@@ -1,0 +1,52 @@
+# Python cache files
+
+**pycache**/
+\*.py[cod]
+
+# Virtual environment
+
+venv/
+env/
+
+# Logs & temp files
+
+_.log
+_.tmp
+_.temp
+_.bak
+
+# Lock files
+
+\*.lock
+
+# System-specific files
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE/editor config
+
+.vscode/
+.idea/
+_.sublime-workspace
+_.sublime-project
+
+# Build/output folders
+
+build/
+dist/
+\*.egg-info/
+
+# Node.js (if using JS)
+
+node_modules/
+
+# Git & version control
+
+.git/
+.gitignore
+
+# Custom (add yours below)
+
+tmp/

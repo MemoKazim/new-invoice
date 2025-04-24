@@ -3,3 +3,6 @@ reports/*
 venv
 setup.py
 test.py
+__pycache__/*
+lib/__pycache__/*
+lib/*.pyc

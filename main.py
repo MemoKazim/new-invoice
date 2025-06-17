@@ -91,7 +91,7 @@ def main():
   filename = f"{overheadOption[overheadChoice].split('.')[1]}_report_{fromDate}-{toDate}_{today.tm_hour}-{today.tm_min}-{today.tm_sec}.tmp"
   # # filename = f"{today.tm_mday}-{today.tm_mon}-{today.tm_year}_inbox_report_of_{fromDate}--{toDate}.csv" # Debugging purpose
 
-  headers = "Tarix, Göndərən tərəf, Göndərən VÖEN, Qəbul edən tərəf, Qəbul edən VÖEN, Mesaj, Serial kod, Status, Malın adı, Malın kodu, Barkod, Ölçü vahidi, Miqdarı / Həcmi, Vahidin satış qiyməti, Cəmi məbləği(manatla) 6*7, Aksiz dərəcəsi(%), Aksiz Məbləği(manatla), Cəmi 6*7+10, ƏDV-yə 18% cəlb edilən, ƏDV-yə 0% cəlb edilən, ƏDV-dən azad olunan, ƏDV-yə cəlb edilməyən, ƏDV məbləği (11*0.18), Yol vergisi, Yekun Məbləğ (11+16+17), URL\n"
+  headers = "Tarix, Göndərən tərəf, Göndərən VÖEN, Qəbul edən tərəf, Qəbul edən VÖEN, Qeyd, Əlavə qeyd, Serial kod, Status, Malın adı, Malın kodu, Barkod, Ölçü vahidi, Miqdarı / Həcmi, Vahidin satış qiyməti, Cəmi məbləği(manatla) 6*7, Aksiz dərəcəsi(%), Aksiz Məbləği(manatla), Cəmi 6*7+10, ƏDV-yə 18% cəlb edilən, ƏDV-yə 0% cəlb edilən, ƏDV-dən azad olunan, ƏDV-yə cəlb edilməyən, ƏDV məbləği (11*0.18), Yol vergisi, Yekun Məbləğ (11+16+17), URL\n"
   h.setCsvHeaders(filename, headers)
   URLS = w.getInvoiceUrls(overheadOption[overheadChoice], fromDate, toDate, session)
   w.getOverheads(URLS, session, filename)

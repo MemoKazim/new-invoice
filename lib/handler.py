@@ -221,6 +221,7 @@ def parseInbox(json, url, filename):
         roadTax      = float(sanitizeField(item['roadTax']))
         finalPrice   = float(cost + vatCost + roadTax)
         comment      = sanitizeField(json["invoiceComment"])
+        comment2     = sanitizeField(json["invoiceComment2"])
         senderName   = sanitizeField(json['sender']['name'])
         senderTIN    = sanitizeField(json['sender']['tin'])
         receiverName = sanitizeField(json['receiver']['name'])
@@ -240,6 +241,7 @@ def parseInbox(json, url, filename):
           "receiverName": receiverName,
           "receiverTIN" : receiverTIN,
           "comment"     : comment,
+          "comment2"    : comment2,
           "serialNumber": serialNumber,
           "status"      : status,
           "productName" : productName,
@@ -271,7 +273,7 @@ def parseInbox(json, url, filename):
         continue
 
       # Write data into file
-      r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
+      r.write(f"{row["createdAt"]},{row["senderName"]},{row["senderTIN"]},{row["receiverName"]},{row["receiverTIN"]},{row["comment"]},{row["comment2"]},{row["serialNumber"]},{row["status"]},{row["productName"]},{row["productCode"]},{row["barcode"]},{row["unit"]},{row["quantity"]},{row["pricePerUnit"]},{row["costAmount"]},{row["exciseRate"]},{row["excise"]},{row["cost"]},{row["vat18"]},{row["vat0" ]},{row["vatFree"]},{row["exempt" ]},{row["vatCost"]},{row["roadTax"]},{row["finalPrice"]},{row["reference"]}\n")
   
   if FAILED_URLS:
     print(f"{c.FG_RED} [!] Failed to parse some URLs. See below: {c.END}")

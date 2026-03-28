@@ -7,3 +7,4 @@ __pycache__/*
 lib/__pycache__/*
 lib/*.pyc
 log/*
+build/*

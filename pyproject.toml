@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "invoice-scrapper"
+version = "2.0.0"
+description = "E-taxes.gov.az invoice report exporter"
+requires-python = ">=3.11"
+dependencies = [
+    "requests",
+    "pandas",
+    "openpyxl",
+    "PyQt6",
+]
+
+[project.scripts]
+invoice-gui = "invoice.gui.app:launch"
+invoice-cli = "invoice.cli.commands:run"
+
+[tool.setuptools.packages.find]
+where = ["projects"]
+include = ["invoice*"]

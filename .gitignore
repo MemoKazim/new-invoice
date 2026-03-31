@@ -9,3 +9,4 @@ lib/*.pyc
 log/*
 build/*
 data/sample
+dist/*

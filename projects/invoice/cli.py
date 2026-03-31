@@ -2,34 +2,26 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-import datetime
-import traceback
+if not getattr(sys, 'frozen', False):
+    _here = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.dirname(_here))                   # projects/ → import invoice
+    sys.path.insert(0, os.path.dirname(os.path.dirname(_here)))  # root/    → import core, config
 
 from invoice.cli.commands import run
-from invoice.colors import bcolors as c
-from invoice.core.exceptions import NETWORK_ERRORS
-import invoice as app
+from core.logger import logger
+from core.exceptions import NETWORK_ERRORS
 
 if __name__ == "__main__":
     try:
-        if sys.platform == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
+        if sys.platform == 'nt': os.system('cls')
+        else: os.system('clear')
         run()
     except KeyboardInterrupt:
-        print(f"\n{c.FG_RED}[!] Exiting Program! {c.END}")
+        logger.info("Exiting via keyboard interrupt")
         sys.exit()
-    except NETWORK_ERRORS as e:
-        print(f"\n{c.FG_RED}[!] Bad news! Did you connect to the internet? {c.END}")
+    except NETWORK_ERRORS:
+        logger.error("Network error — check internet connection")
         sys.exit()
-    except Exception as e:
-        print(f"\n{c.FG_RED}[!] Unexpected error happened! Please contact to developer! Exiting Program!{c.END}")
-        with open("log/error.log", "a", encoding="UTF-8") as ef:
-            ef.write(f"{datetime.datetime.now()} - {e}\n")
-        if app.DEBUG:
-            print(f"{c.FG_RED}[!] Error: {e} {c.END}")
-            print(f"{c.FG_RED}[!] Traceback: {traceback.format_exc()} {c.END}")
+    except Exception:
+        logger.exception("Unexpected error — please contact the developer")
         sys.exit()

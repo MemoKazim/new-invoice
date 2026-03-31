@@ -3,8 +3,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QButtonGroup, QRadioButton, QMessageBox,
 )
 from PyQt6.QtGui import QFont
-from invoice.core import services as s
-from invoice.core import validators as v
+from core import validators as v
 from invoice.gui.workers import LoginWorker
 from invoice.i18n import t
 
@@ -95,10 +94,8 @@ class LoginView(QWidget):
             return
 
         self._btn.setEnabled(False)
-        session = s.create_session()
-        self._window.session = session
 
-        self._worker = LoginWorker({"phone": phone, "id": uid}, session)
+        self._worker = LoginWorker({"phone": phone, "id": uid})
         self._worker.succeeded.connect(self._on_success)
         self._worker.failed.connect(self._on_failed)
         self._worker.start()
@@ -106,9 +103,9 @@ class LoginView(QWidget):
         self._window.asan_view.start()
         self._window.navigate(self._window.asan_view)
 
-    def _on_success(self, session, certs):
+    def _on_success(self, client, certs):
         self._btn.setEnabled(True)
-        self._window.session = session
+        self._window.client = client
         self._window.certificates = certs
         self._window.asan_view.stop()
         self._window.cert_view.load(certs)

@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         self._is_dark = False
 
         # shared state passed between views
-        self.session = None
+        self.client = None
         self.certificates = []
         self.selected_cert = None
 

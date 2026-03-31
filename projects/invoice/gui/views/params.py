@@ -97,7 +97,7 @@ class ParamsView(QWidget):
 
         self._window.navigate(self._window.progress_view)
         self._window.progress_view.start(
-            self._window.session,
+            self._window.client,
             self._window.selected_cert,
             overhead,
             from_date,

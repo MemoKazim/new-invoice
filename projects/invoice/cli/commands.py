@@ -1,19 +1,10 @@
-from invoice.colors import bcolors as c
+from core.colors import bcolors as c
+from core.services import EtaxesClient
+from core import validators as v
 from invoice.cli.banner import banner
-from invoice.core import validators as v
-from invoice.core import services as s
 from invoice.adapters import get_adapter
-import importlib
 import time
 import os
-
-
-def check_lib():
-    for lib in ('pandas', 'requests', 'openpyxl'):
-        try:
-            importlib.import_module(lib)
-        except ImportError:
-            os.system(f"pip install {lib}")
 
 
 def get_asan_login() -> dict:
@@ -133,7 +124,7 @@ def file_opener_handler(filename: str):
 
     if user_input in ["y", "Y", ""]:
         print(f"{c.FG_GREEN}[+] Opening file...\nHave a nice day :) {c.END}")
-        xlsx_path = f"reports/{filename.split('.')[0]}.xlsx"
+        xlsx_path = f"reports/invoices/{filename.split('.')[0]}.xlsx"
         adapter.open_report(xlsx_path)
 
     if user_input in ["n", "N"]:
@@ -147,9 +138,9 @@ _SIGN_IN_INPUT = {
 }
 
 _SIGN_IN = {
-    "1": s.kps_login,
-    "2": s.sv_login,
-    "3": s.asan_login,
+    "1": EtaxesClient.kps_login,
+    "2": EtaxesClient.sv_login,
+    "3": EtaxesClient.asan_login,
 }
 
 _OVERHEAD_OPTIONS = {
@@ -162,8 +153,8 @@ def run():
     adapter = get_adapter()
     adapter.ensure_dirs()
 
-    check_lib()
-    s.clean_tmp()
+    client = EtaxesClient()
+    client.clean_tmp()
 
     print(banner)
 
@@ -172,21 +163,10 @@ def run():
     from_date, to_date = date_handler()
 
     requirements = _SIGN_IN_INPUT[sign_in_choice]()
-    session = s.create_session()
-    session = _SIGN_IN[sign_in_choice](requirements, session)
+    _SIGN_IN[sign_in_choice](client, requirements)
 
-    certificates = s.list_certificates(session)
+    certificates = client.list_certificates()
     cert_choice = certificate_handler(certificates)
-    selected_cert = certificates[cert_choice - 1]
-
-    session = s.get_dashboard(selected_cert, session)
+    client.get_dashboard(certificates[cert_choice - 1])
 
     today = time.localtime()
-    overhead_name = _OVERHEAD_OPTIONS[overhead_choice].split('.')[1]
-    filename = f"{overhead_name}_report_{from_date}-{to_date}_{today.tm_hour}-{today.tm_min}-{today.tm_sec}.tmp"
-
-    urls = s.get_invoice_urls(_OVERHEAD_OPTIONS[overhead_choice], from_date, to_date, session)
-    df = s.get_overheads(urls, session)
-    s.logout(session)
-    s.convert_to_xlsx(df, filename)
-    file_opener_handler(filename)

@@ -71,7 +71,7 @@ class ProgressView(QWidget):
         if not current:
             self._title.setText(t("progress_title"))
 
-    def start(self, session, certificate, overhead_choice: str,
+    def start(self, client, certificate, overhead_choice: str,
               from_date: str, to_date: str):
         self._log.clear()
         self._bar.setRange(0, 0)
@@ -80,7 +80,7 @@ class ProgressView(QWidget):
         self._filename = None
         self._title.setText(t("progress_title"))
 
-        self._worker = FetchWorker(session, certificate, overhead_choice,
+        self._worker = FetchWorker(client, certificate, overhead_choice,
                                    from_date, to_date)
         self._worker.progress.connect(self._on_progress)
         self._worker.succeeded.connect(self._on_success)
@@ -108,7 +108,7 @@ class ProgressView(QWidget):
 
     def _on_open(self):
         from invoice.adapters import get_adapter
-        get_adapter().open_report(f"reports/{self._filename}")
+        get_adapter().open_report(f"reports/invoices/{self._filename}")
 
     def _on_new(self):
         self._window.navigate(self._window.params_view)

@@ -2,10 +2,17 @@
 import sys
 import os
 
-# sys.path manipulation is only needed when running as a plain Python script.
-# PyInstaller's bootloader handles imports automatically in the frozen .exe.
+# Must be called before ANY other code when frozen, so the multiprocessing
+# worker process (spawned by loguru's enqueue=True) is intercepted before
+# it re-imports core.logger and spawns yet another worker → infinite loop.
+if getattr(sys, 'frozen', False):
+    import multiprocessing
+    multiprocessing.freeze_support()
+
 if not getattr(sys, 'frozen', False):
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    _here = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.dirname(_here))                   # projects/ → import invoice
+    sys.path.insert(0, os.path.dirname(os.path.dirname(_here)))  # root/    → import core
 
 from invoice.gui.app import launch
 

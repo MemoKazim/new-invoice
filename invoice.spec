@@ -8,12 +8,27 @@ block_cipher = None
 
 a = Analysis(
     ['projects/invoice/main.py'],
-    pathex=['projects'],           # makes 'invoice' package importable during analysis
+    pathex=['projects', '.'],      # 'projects' → invoice package; '.' → core, config packages
     binaries=[],
     datas=[
         ('data', 'data'),          # include data/ folder (filter.json etc.)
     ],
     hiddenimports=[
+        # third-party (not always auto-detected by PyInstaller)
+        'loguru',
+        'multiprocessing',
+        'multiprocessing.queues',
+        # config package
+        'config',
+        'config.logs',
+        # core package
+        'core.logger',
+        'core.endpoints',
+        'core.services',
+        'core.models',
+        'core.validators',
+        'core.exceptions',
+        'core.colors',
         # dynamic imports inside _build_views() won't be auto-detected
         'invoice.gui.views.login',
         'invoice.gui.views.asan_confirm',

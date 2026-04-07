@@ -348,8 +348,7 @@ def run():
     date = date_handler()
     declarations = client.declaration_list(date)
     declaration = declaration_handler(declarations)
-    raw_data = client.declaration_get(declaration)
-    json_data = json.loads(raw_data["calcPartJson"])
+    json_data = client.declaration_get(declaration)
 
     wb = Workbook()
     ws = wb.active

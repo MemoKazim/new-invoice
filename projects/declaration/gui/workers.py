@@ -1,4 +1,3 @@
-import json
 import os
 from PyQt6.QtCore import QThread, pyqtSignal
 from core.services import EtaxesClient
@@ -68,8 +67,7 @@ class FetchWorker(QThread):
             os.makedirs("reports/declarations", exist_ok=True)
 
             self.progress.emit(t("w_fetching"))
-            raw_data  = self._client.declaration_get(self._declaration_id)
-            json_data = json.loads(raw_data["calcPartJson"])
+            json_data = self._client.declaration_get(self._declaration_id)
 
             self.progress.emit(t("w_generating"))
             wb = Workbook()

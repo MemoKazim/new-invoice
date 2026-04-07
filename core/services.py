@@ -351,7 +351,7 @@ class EtaxesClient:
     def declaration_get(
         self,
         id: int,
-    ) -> None:
+    ) -> list:
         logger.info(f"Fetching declaration data...", id=id)
         r = self._session.get(
             _url("declaration_get"),
@@ -362,4 +362,10 @@ class EtaxesClient:
                 "private_emp": False,
             }
         )
-        return r.json()
+        data = r.json()
+        calc_part = data.get("calcPartJson") if isinstance(data, dict) else data
+        if calc_part is None:
+            return []
+        if isinstance(calc_part, (list, dict)):
+            return calc_part
+        return json.loads(calc_part)

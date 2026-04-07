@@ -59,11 +59,12 @@ _STRINGS: dict[str, dict[str, str]] = {
         "year_err_msg":   "Enter a valid 4-digit year.",
 
         # Declaration list
-        "decl_title":       "Select Declaration",
-        "decl_subtitle":    "Choose a declaration to generate the report:",
-        "decl_btn":         "Generate Report",
-        "decl_nosel_title": "No Selection",
-        "decl_nosel_msg":   "Please select a declaration.",
+        "decl_title":              "Select Declaration",
+        "decl_subtitle":           "Choose a declaration to generate the report:",
+        "decl_search_placeholder": "Search by ID…",
+        "decl_btn":                "Generate Report",
+        "decl_nosel_title":        "No Selection",
+        "decl_nosel_msg":          "Please select a declaration.",
 
         # Progress
         "progress_title": "Generating Report",
@@ -129,11 +130,12 @@ _STRINGS: dict[str, dict[str, str]] = {
         "year_err_msg":   "Düzgün 4 rəqəmli il daxil edin.",
 
         # Declaration list
-        "decl_title":       "Bəyannamə seçin",
-        "decl_subtitle":    "Hesabat yaratmaq üçün bəyannaməni seçin:",
-        "decl_btn":         "Hesabat yarat",
-        "decl_nosel_title": "Seçim edilməyib",
-        "decl_nosel_msg":   "Zəhmət olmasa bəyannamə seçin.",
+        "decl_title":              "Bəyannamə seçin",
+        "decl_subtitle":           "Hesabat yaratmaq üçün bəyannaməni seçin:",
+        "decl_search_placeholder": "ID ilə axtar…",
+        "decl_btn":                "Hesabat yarat",
+        "decl_nosel_title":        "Seçim edilməyib",
+        "decl_nosel_msg":          "Zəhmət olmasa bəyannamə seçin.",
 
         # Progress
         "progress_title": "Hesabat yaradılır",
@@ -199,11 +201,12 @@ _STRINGS: dict[str, dict[str, str]] = {
         "year_err_msg":   "Введите корректный 4-значный год.",
 
         # Declaration list
-        "decl_title":       "Выбор декларации",
-        "decl_subtitle":    "Выберите декларацию для формирования отчёта:",
-        "decl_btn":         "Сформировать отчёт",
-        "decl_nosel_title": "Нет выбора",
-        "decl_nosel_msg":   "Пожалуйста, выберите декларацию.",
+        "decl_title":              "Выбор декларации",
+        "decl_subtitle":           "Выберите декларацию для формирования отчёта:",
+        "decl_search_placeholder": "Поиск по ID…",
+        "decl_btn":                "Сформировать отчёт",
+        "decl_nosel_title":        "Нет выбора",
+        "decl_nosel_msg":          "Пожалуйста, выберите декларацию.",
 
         # Progress
         "progress_title": "Формирование отчёта",

@@ -6,3 +6,7 @@ test.py
 __pycache__/*
 lib/__pycache__/*
 lib/*.pyc
+log/*
+build/*
+data/sample
+dist/*

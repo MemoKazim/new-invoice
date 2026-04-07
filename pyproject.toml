@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "invoice-scrapper"
+version = "2.0.0"
+description = "Fetch, parse, and export invoice reports from new.e-taxes.gov.az via ASAN IMZA authentication."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Memorise LLC" },
+]
+keywords = [
+    "azerbaijan", "e-taxes", "invoice", "asan-imza",
+    "etaxes", "scraper", "excel", "report",
+]
+fonts = [
+    banner :: DOS Rebel
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "requests>=2.31",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "PyQt6>=6.6",
+    "loguru>=0.7",
+]
+
+[project.optional-dependencies]
+build = ["pyinstaller>=6.0"]
+dev   = ["pytest>=8.0", "ruff"]
+
+[project.scripts]
+invoice-gui = "invoice.gui.app:launch"
+invoice-cli = "invoice.cli.commands:run"
+
+[project.urls]
+Homepage   = "https://github.com/Memorise-LLC/invoice-scrapper"
+Issues     = "https://github.com/Memorise-LLC/invoice-scrapper/issues"
+
+[tool.setuptools.packages.find]
+where   = [".", "projects"]
+include = ["core*", "invoice*"]

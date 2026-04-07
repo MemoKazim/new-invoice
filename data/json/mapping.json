@@ -1,0 +1,152 @@
+{
+    "mainWorkPlace": {
+        "section": "2.1",
+        "title": {
+            "az": "Əsas iş yeri barədə məlumat"
+        }
+    },
+    "dayCount": {
+        "section": "2.2",
+        "title": {
+            "az": "Faktiki iş günlərinin sayı"
+        }
+    },
+    "INCOME_AMOUNT": {
+        "section": "2.3",
+        "title": {
+            "az": "Hesablanmış əmək haqqı və digər gəlirlər"
+        }
+    },
+    "OTHER_INCOME_AMOUNT": {
+        "section": "2.3.1",
+        "title": {
+            "az": "O cümlədən əmək haqqının tərkibinə daxil olmayan gəlirlər (işçinin sosial xarakterli xərclərinin çəkilməsinin nəticəsi kimi əldə edilən gəlirlər)"
+        }
+    },
+    "COMPENSATION": {
+        "section": "2.4",
+        "title": {
+            "az": "İstifadə edilməmiş məzuniyyətinə görə hesablanmış kompensasiya məbləği"
+        }
+    },
+    "MDSS_LIFE_INSURANCE_INVOLVE_AMOUNT": {
+        "section": "2.5",
+        "title": {
+            "az": "Həyatın yığım sığortasına cəlb olunmuş məbləğ (vaxtından əvvəl müqaviləyə xitam verildiyi halda)"
+        }
+    },
+    "texnoParkInfo": {
+        "section": "2.6",
+        "title": {
+            "az": "Texnologiyalar parkı üzrə məlumatlar"
+        }
+    },
+    "DISCOUNT_AMOUNT": {
+        "section": "3.1",
+        "title": {
+            "az": "Azadolunan və güzəşt verilən cəmi gəlirin məbləği"
+        }
+    },
+    "INVOLVE_AMOUNT": {
+        "section": "3.2",
+        "title": {
+            "az": "Vergiyə cəlb edilən gəlirin məbləği"
+        }
+    },
+    "TAX_AMOUNT": {
+        "section": "3.3",
+        "title": {
+            "az": "Vergi məbləği"
+        }
+    },
+    "MDSS_NON_INVOLVE_AMOUNT": {
+        "section": "4.1",
+        "title": {
+            "az": "MDSS haqqına cəlb olunmayan cəmi məbləğ"
+        }
+    },
+    "MDSS_INVOLVE_AMOUNT": {
+        "section": "4.2",
+        "title": {
+            "az": "MDSS haqqına cəlb olunan gəlirlər"
+        }
+    },
+    "MDSS_INSURER_CALC_AMOUNT": {
+        "section": "4.3",
+        "title": {
+            "az": "Əmək haqqı və digər gəlirlərə nisbətdə sığortaedənin hesabına hesablanmış məcburi dövlət sosial sığorta haqqı"
+        }
+    },
+    "MDSS_INSURER_COMPENSATION_AMOUNT": {
+        "section": "4.4",
+        "title": {
+            "az": "İstifadə edilməmiş əmək məzuniyyətinə görə hesablanmış kompensasiya məbləğinə nisbətdə sığortaedənin hesabına hesablanmış məcburi dövlət sosial sığorta haqqı"
+        }
+    },
+    "MDSS_LIFE_INSURANCE_AMOUNT": {
+        "section": "4.5",
+        "title": {
+            "az": "Həyatın yığım sığortasına cəlb olunmuş məbləğə nisbətdə (vaxtından əvvəl müqaviləyə xitam verildiyi halda) sığortaedənin hesabına hesablanmış məcburi dövlət sosial sığorta haqqı"
+        }
+    },
+    "MDSS_INSURANT_CALC_AMOUNT": {
+        "section": "4.6",
+        "title": {
+            "az": "Əmək haqqı və digər gəlirlərə nisbətdə sığortaolunanın hesabına hesablanmış məcburi dövlət sosial sığorta haqqı"
+        }
+    },
+    "MDSS_INSURANT_COMPENSATION_AMOUNT": {
+        "section": "4.7",
+        "title": {
+            "az": "İstifadə edilməmiş əmək məzuniyyətinə görə hesablanmış kompensasiya məbləğinə nisbətdə sığortaolunanın hesabına hesablanmış məcburi dövlət sosial sığorta haqqı"
+        }
+    },
+    "UNEMPLOYMENT_NON_INVOLVE_AMOUNT": {
+        "section": "5.1",
+        "title": {
+            "az": "İşsizlikdən sığorta haqqına cəlb olunmayan cəmi məbləğ"
+        }
+    },
+    "UNEMPLOYMENT_INVOLVE_AMOUNT": {
+        "section": "5.2",
+        "title": {
+            "az": "İşsizlikdən sığorta haqqına cəlb olunan gəlirlər"
+        }
+    },
+    "UNEMPLOYMENT_INSURER_CALC_AMOUNT": {
+        "section": "5.3",
+        "title": {
+            "az": "Sığortaedənin hesabına hesablanmış işsizlikdən sığorta haqqı"
+        }
+    },
+    "UNEMPLOYMENT_INSURANT_CALC_AMOUNT": {
+        "section": "5.4",
+        "title": {
+            "az": "Sığortaolunanın hesabına hesablanmış işsizlikdən sığorta haqqı"
+        }
+    },
+    "COMPULSORY_INSURANCE_NON_INVOLVE_AMOUNT": {
+        "section": "6.1",
+        "title": {
+            "az": "İcbari tibbi sığorta haqqına cəlb olunmayan cəmi məbləğ"
+        }
+    },
+    "COMPULSORY_INSURANCE_INVOLVE_AMOUNT": {
+        "section": "6.2",
+        "title": {
+            "az": "İcbari tibbi sığorta haqqına cəlb edilən gəlirlər"
+        }
+    },
+    "COMPULSORY_INSURANCE_INSURER_CALC_AMOUNT": {
+        "section": "6.3",
+        "title": {
+            "az": "Sığortalının hesabına hesablanmış icbari tibbi sığorta haqqı"
+        }
+    },
+    "COMPULSORY_INSURANCE_INSURANT_CALC_AMOUNT": {
+        "section": "6.4",
+        "title": {
+            "az": "Sığortaolunanın hesabına hesablanmış icbari tibbi sığorta haqqı"
+        }
+    }
+}

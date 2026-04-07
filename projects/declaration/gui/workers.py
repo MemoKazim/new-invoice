@@ -1,4 +1,3 @@
-import os
 from PyQt6.QtCore import QThread, pyqtSignal
 from core.services import EtaxesClient
 from declaration.i18n import t
@@ -64,7 +63,6 @@ class FetchWorker(QThread):
 
             adapter = get_adapter()
             adapter.ensure_dirs()
-            os.makedirs("reports/declarations", exist_ok=True)
 
             self.progress.emit(t("w_fetching"))
             json_data = self._client.declaration_get(self._declaration_id)

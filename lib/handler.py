@@ -347,7 +347,7 @@ def cleanTmp():
   This function cleans ./tmp/ folder to avoid report collusion.
   """
   for file in os.listdir("./tmp"):
-    os.system(f"del tmp\\{file}")
+    os.unlink(f"tmp/{file}")
   
   # Inform User about action
   print(f"{c.FG_GREEN}[+] Tmp directory cleaned{c.END}")

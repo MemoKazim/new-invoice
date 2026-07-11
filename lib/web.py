@@ -3,10 +3,48 @@ import lib.handler as h
 import sys
 import time
 import json
+import base64
 
 CERTIFICATES = []
 
 host = "https://new.e-taxes.gov.az"
+
+REFRESH_BUFFER_SECONDS = 60
+
+def _decodeTokenExp(session):
+  """
+  Decodes the current X-Authorization bearer JWT and returns its `exp` claim (unix seconds).
+  Returns None if header missing or token malformed.
+  """
+  token = session.headers.get("X-Authorization", "")
+  if not token.startswith("Bearer "):
+    return None
+
+  try:
+    payload = token.split(" ")[1].split(".")[1]
+    padded = payload + "=" * (-len(payload) % 4)
+    claims = json.loads(base64.urlsafe_b64decode(padded))
+    return claims.get("exp")
+  except Exception:
+    return None
+
+def refreshTokenIfNeeded(certificate, session):
+  """
+  Re-issues the X-Authorization bearer token when it's close to expiring.
+  The e-taxes portal keeps the underlying ASAN IMZA session alive independently of the
+  short-lived (10 min) JWT, so calling chooseTaxpayer again silently mints a fresh token
+  without requiring the user to re-confirm on their phone.
+  `certificate`: previously selected certificate tuple (tin, name, taxpayerType)
+  `session`: Session object
+  """
+  exp = _decodeTokenExp(session)
+
+  if exp is None or time.time() < exp - REFRESH_BUFFER_SECONDS:
+    return session
+
+  print(f"{c.FG_YELLOW}[*] Access token about to expire. Refreshing session...{c.END}")
+  session = getDashboard(certificate, session)
+  return session
 
 def AsanLogin(data, session):
   """
@@ -182,13 +220,14 @@ def getDashboard(certificate, session):
   session.headers.update({'X-Authorization': f"Bearer {r.headers['x-authorization']}"})
   return session
 
-def getInvoiceUrls(overheadChoice, fromDate, toDate, session):
+def getInvoiceUrls(overheadChoice, fromDate, toDate, session, certificate):
   """
   This function returns all invoice api URLs according params.
   `overheadChoice`: it should be either "find.inbox" or "find.outbox"
   `fromDate`: "dd-mm-yyyy" formatted date object
   `toDate`: "dd-mm-yyyy" formatted date object
   `session`: Session object
+  `certificate`: selected certificate tuple, needed to silently refresh the token on long fetches
   """
   URLS = []
 
@@ -260,6 +299,9 @@ def getInvoiceUrls(overheadChoice, fromDate, toDate, session):
   # Get all URLs while hasMore parameter in json is true
   while True:
 
+    # Refresh access token before it expires so long date ranges don't get cut off mid-fetch
+    session = refreshTokenIfNeeded(certificate, session)
+
     # Set offset to not retrieve same invoices again
     filter["offset"] = page * filter["maxCount"]
 
@@ -280,16 +322,20 @@ def getInvoiceUrls(overheadChoice, fromDate, toDate, session):
     
   return URLS
 
-def getOverheads(URLS, session, filename):
+def getOverheads(URLS, session, filename, certificate):
   """
   This function generates CSV file accoring given URLS
   `URLS`: list of api URLs
   `session`: Session object which contains cookies
   `filename`: CSV filename to set
+  `certificate`: selected certificate tuple, needed to silently refresh the token on long fetches
   """
   print(f"{c.FG_GREEN}[*] Retrieving data from server. Please wait.\n[*] This might take while")
   # Loop through each invoice URL and generate CSV report
   for invoice in URLS:
+    # Refresh access token before it expires so large invoice counts don't fail mid-fetch
+    session = refreshTokenIfNeeded(certificate, session)
+
     # Retrieve json data regarding invoice data
     r = session.get(invoice)
 

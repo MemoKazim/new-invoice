@@ -3,6 +3,7 @@ from lib.banner import banner
 import lib.handler as h
 import config as cfg
 import lib.web as w
+import lib.network as net
 import traceback
 import requests
 import datetime
@@ -11,6 +12,7 @@ import sys
 import os
 
 session = requests.Session()
+session = net.attachRetry(session)
 session.headers.update({
   "Host":"new.e-taxes.gov.az",
   "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
@@ -93,8 +95,8 @@ def main():
 
   headers = "Tarix, Göndərən tərəf, Göndərən VÖEN, Qəbul edən tərəf, Qəbul edən VÖEN, Qeyd, Əlavə qeyd, Serial kod, Status, Malın adı, Malın kodu, Barkod, Ölçü vahidi, Miqdarı / Həcmi, Vahidin satış qiyməti, Cəmi məbləği(manatla) 6*7, Aksiz dərəcəsi(%), Aksiz Məbləği(manatla), Cəmi 6*7+10, ƏDV-yə 18% cəlb edilən, ƏDV-yə 0% cəlb edilən, ƏDV-dən azad olunan, ƏDV-yə cəlb edilməyən, ƏDV məbləği (11*0.18), Yol vergisi, Yekun Məbləğ (11+16+17), URL\n"
   h.setCsvHeaders(filename, headers)
-  URLS = w.getInvoiceUrls(overheadOption[overheadChoice], fromDate, toDate, session)
-  w.getOverheads(URLS, session, filename)
+  URLS = w.getInvoiceUrls(overheadOption[overheadChoice], fromDate, toDate, session, selectedCertificate)
+  w.getOverheads(URLS, session, filename, selectedCertificate)
   w.logout(session)
   h.convertToXlsx("./tmp/", filename)
   # h.cleanTmp() # See me I am right here!
@@ -109,7 +111,7 @@ except KeyboardInterrupt:
   sys.exit()
   input()
 except NETWORK_ERROR as e:
-  print(f"\n{c.FG_RED}[!] Bad news! Did you connect to the internet? {c.END}")
+  print(f"\n{c.FG_RED}[!] Bad news! Connection kept failing even after automatic retries. Check your internet and run script again. {c.END}")
   sys.exit()
 except Exception as e:
   print(f"\n{c.FG_RED}[!] Unexpected error happened! Please contact to developer! Exiting Program!{c.END}")
